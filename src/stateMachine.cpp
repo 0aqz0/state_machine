@@ -1,5 +1,8 @@
 #include "stateMachine.h"
+#include <thread>
+
 namespace decision{
+
 void StateMachine::switchFromAttack(Event event){
 	if (event == STOP)
 	{
@@ -42,21 +45,33 @@ void StateMachine::switchFromUnkown(Event event){
     }
 }
 
+void StateMachine::set_event(Event event){
+    this->event = event;  
+}
+
 void StateMachine::handler(Event event){
-    switch(state){
-    	case ATTACK:
-    	    switchFromAttack(event);
-    	    break;
-    	case DEFENCE:
-    	    switchFromDefence(event);
-    	    break;
-    	case SPY:
-    	    switchFromSpy(event);
-    	    break;
-    	case UNKOWN:
-    	    switchFromUnkown(event);
-    	    break;
+	while(true){
+	    switch(state){
+	    	case ATTACK:
+	    	    switchFromAttack(event);
+	    	    break;
+	    	case DEFENCE:
+	    	    switchFromDefence(event);
+	    	    break;
+	    	case SPY:
+	    	    switchFromSpy(event);
+	    	    break;
+	    	case UNKOWN:
+	    	    switchFromUnkown(event);
+	    	    break;
+	    }
     }
+}
+
+bool StateMachine::start(){
+    std::thread new_thread(handler);
+    new_thread.detach();
+    return true;
 }
 
 }
