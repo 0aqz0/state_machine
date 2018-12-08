@@ -30,6 +30,7 @@ public:
 	void switchFromUnkown(Event event);
     void handler(Event event);
     void set_event(Event event){ this->event = event; }
+    State get_state(){ return state; }
 private:
     State state;
     Event event;
