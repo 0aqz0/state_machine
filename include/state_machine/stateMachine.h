@@ -18,11 +18,43 @@ enum Event
 	FIND_ENEMY = 2,	   // find enemy            ------------spy on enemy
 	STOP       = 3,    // attack or defence stop
 };
-
+inline const char* stateToString(State state){
+	switch(state){
+		case ATTACK: return "ATTACK";
+		case DEFENCE: return "DEFENCE";
+		case SPY: return "SPY";
+		default: return "UNKOWN";
+	}
+}
+inline const char* eventToString(Event event){
+	switch(event){
+		case ATTACKED: return "ATTACKED";
+		case NOTHING: return "NOTHING";
+		case FIND_ENEMY: return "FIND_ENEMY";
+        case STOP: return "STOP";
+	}
+}
+inline Event stringToEvent(const char* event){
+	if (event == "ATTACKED")
+	{
+		return ATTACKED;
+	}
+    else if (event == "NOTHING")
+    {
+    	return NOTHING;
+    }
+    else if (event == "FIND_ENEMY")
+    {
+    	return FIND_ENEMY;
+    }
+    else
+    	return STOP;
+}
 class StateMachine
 {
 public:
-	StateMachine(State initState = UNKOWN) : state(initState), event(NOTHING){}
+	StateMachine(){}
+	// StateMachine(State initState = UNKOWN): state(initState), event(NOTHING) {}
 	~StateMachine(){}
 	void attack(){ std::cout << "I am attacking!!!\n"; }
 	void defend(){ std::cout << "I am defending!!!\n"; }
@@ -32,53 +64,14 @@ public:
 	void switchFromDefence(Event event);
 	void switchFromSpy(Event event);
 	void switchFromUnkown(Event event);
-    void handler(Event event);
-    void set_event(Event event);
-    State get_state(){ return state; }
+    void handler();
+    void set_event(const char* event){ this->event = stringToEvent(event); }
+    const char* get_state(){ return stateToString(state); } 
+    const char* get_event(){ return eventToString(event); }
     bool start();
 private:
-    State state;
-    Event event;
+    static State state;
+    static Event event;
 };
 
-// class StateMachine
-// {
-// public:
-// 	StateMachine(State initState = UNKOWN) : state(initState), event(NOTHING){
-// 		state_pub = nh_.advertise<std_msgs::String>("stateMachine/state", 1);
-//         event_sub = nh_.subscribe("stateMachine/event", 10, eventCallback);
-//         ros::Rate loop_rate(10);
-//         while(ros::ok()){
-//         	std_msgs::String msg;
-//         	msg.data = "unkown";
-//         	state_pub.publish(msg);
-//         	ros::spinOnce();
-//         	loop_rate.sleep();
-//         }
-// 	}
-// 	~StateMachine(){}
-// 	void attack(){ std::cout << "I am attacking!!!\n"; }
-// 	void defend(){ std::cout << "I am defending!!!\n"; }
-// 	void spy(){ std::cout << "I am spying on the enemy!!!\n"; }
-// 	void doNothing(){ std::cout << "I am doing nothing!!!\n"; }
-// 	void switchFromAttack(Event event);
-// 	void switchFromDefence(Event event);
-// 	void switchFromSpy(Event event);
-// 	void switchFromUnkown(Event event);
-//     void handler(Event event);
-//     void set_event(std::string event);
-//     State get_state(){ return state; }
-//     bool start();
-// private:
-//     State state;
-//     Event event;
-//     std::string eventStr[4] = {"ATTACKED", "NOTHING", "FIND_ENEMY", "STOP"};
-//     std::string stateStr[4] = {"ATTACK", "DEFENCE", "SPY", "UNKOWN"};
-//     ros::NodeHandle nh_;
-//     ros::Publisher state_pub;
-//     ros::Subscriber event_sub;
-//     void eventCallback(const std_msgs::String::ConstPtr& event){
-//     	// set_event(event.data);
-//     } 
-// };
 }

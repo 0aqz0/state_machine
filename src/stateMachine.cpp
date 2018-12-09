@@ -1,7 +1,12 @@
-#include "stateMachine.h"
+#include "state_machine/stateMachine.h"
+#include <ros/console.h>
+#include <time.h>
 #include <thread>
 
 namespace decision{
+
+State StateMachine::state(UNKOWN);
+Event StateMachine::event(NOTHING);
 
 void StateMachine::switchFromAttack(Event event){
 	if (event == STOP)
@@ -45,12 +50,29 @@ void StateMachine::switchFromUnkown(Event event){
     }
 }
 
-void StateMachine::set_event(Event event){
-    this->event = event;  
-}
-
-void StateMachine::handler(Event event){
+void StateMachine::handler(){
 	while(true){
+		time_t seconds;
+		seconds = time(NULL);
+		int count = 0;
+        if (seconds%10==0)
+        {
+        	switch(count){
+        		case 0: event = ATTACKED; count++; 
+        		    break;
+        		case 1: event = NOTHING; count++; 
+        		    break;
+        		case 2: event = FIND_ENEMY; count++; 
+        		    break;
+        		case 3: event = STOP; count = 0; 
+        		    break;
+        		default:
+        		    break;
+        	}
+        	std::cout << count << "\n";
+        	ROS_INFO("HELLO");
+        }
+        
 	    switch(state){
 	    	case ATTACK:
 	    	    switchFromAttack(event);
@@ -64,13 +86,16 @@ void StateMachine::handler(Event event){
 	    	case UNKOWN:
 	    	    switchFromUnkown(event);
 	    	    break;
+	    	default:
+	    	    break;
 	    }
     }
 }
 
 bool StateMachine::start(){
-    std::thread new_thread(handler);
+    std::thread new_thread(&StateMachine::handler, StateMachine());
     new_thread.detach();
+    // handler();
     return true;
 }
 
