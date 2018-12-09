@@ -1,7 +1,8 @@
 #include "state_machine/stateMachine.h"
 #include <ros/console.h>
-#include <time.h>
 #include <thread>
+#include <random>
+#include <chrono>
 
 namespace decision{
 
@@ -51,27 +52,19 @@ void StateMachine::switchFromUnkown(Event event){
 }
 
 void StateMachine::handler(){
-	while(true){
-		time_t seconds;
-		seconds = time(NULL);
-		int count = 0;
-        if (seconds%10==0)
-        {
-        	switch(count){
-        		case 0: event = ATTACKED; count++; 
-        		    break;
-        		case 1: event = NOTHING; count++; 
-        		    break;
-        		case 2: event = FIND_ENEMY; count++; 
-        		    break;
-        		case 3: event = STOP; count = 0; 
-        		    break;
-        		default:
-        		    break;
+	while(true){		
+        switch(rand()%4){
+            case 0: event = ATTACKED; 
+        	    break;
+        	case 1: event = FIND_ENEMY; 
+        	    break;
+        	case 2: event = NOTHING;
+        	    break;
+        	case 3: event = STOP;
+        	    break;
+        	default:
+        	    break;
         	}
-        	std::cout << count << "\n";
-        	ROS_INFO("HELLO");
-        }
         
 	    switch(state){
 	    	case ATTACK:
@@ -89,6 +82,7 @@ void StateMachine::handler(){
 	    	default:
 	    	    break;
 	    }
+	    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }
 
