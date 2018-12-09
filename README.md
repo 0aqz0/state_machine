@@ -20,6 +20,7 @@ source devel/setup.bash
 
 4. run the state_machine_node
 ```bash
+roscore
 rosrun state_machine state_machine_node
 ```
 
